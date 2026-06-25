@@ -38,10 +38,10 @@ export function ContactCta({
   if (bordered) {
     return (
       <div
-        className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#101010] px-5 py-12 text-center sm:px-8 sm:py-16 lg:px-20 lg:py-20 ${className}`}
+        className={`steel-surface blueprint-frame relative overflow-hidden rounded-3xl border border-white/[0.08] px-5 py-12 text-center shadow-[0_30px_100px_-70px_rgba(0,0,0,0.95)] sm:px-8 sm:py-16 lg:px-20 lg:py-20 ${className}`}
       >
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FF6A00]/40 to-transparent" />
+          <div className="molten-line absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 opacity-80" />
         </div>
         <div className="relative">{inner}</div>
       </div>

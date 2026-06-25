@@ -17,9 +17,9 @@ type AtmosphericBackdropProps = {
 };
 
 const overlayByVariant: Record<AtmosphericVariant, string> = {
-  hero: "from-[#050505]/55 via-[#050505]/40 to-[#050505]/72",
-  section: "from-[#050505]/88 via-[#050505]/82 to-[#050505]/94",
-  texture: "from-[#050505]/92 via-[#050505]/88 to-[#050505]/96",
+  hero: "from-[#050505]/62 via-[#050505]/48 to-[#050505]/78",
+  section: "from-[#050505]/90 via-[#050505]/84 to-[#050505]/95",
+  texture: "from-[#050505]/94 via-[#050505]/90 to-[#050505]/97",
   editorial: "from-[#050505] via-[#050505]/90 to-[#050505]/75",
 };
 

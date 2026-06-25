@@ -7,6 +7,7 @@ import {
 } from "./confirmation-view";
 import { ContactStep } from "./contact-step";
 import { ProgressIndicator } from "./progress-indicator";
+import { motion } from "@/lib/motion";
 import {
   type AssessmentAnswers,
   type AssessmentId,
@@ -14,7 +15,7 @@ import {
 } from "@/lib/assessment-config";
 import type { AssessmentContact, AssessmentUtm } from "@/lib/assessment-submission";
 
-type Phase = "questions" | "contact" | "confirmation";
+type Phase = "questions" | "contact" | "building" | "confirmation";
 type MomentumTone = "start" | "middle" | "nearly";
 
 const emptyContact: AssessmentContact = {
@@ -55,6 +56,45 @@ function isQuestionAnswered(
   if (!answer) return false;
   if (allowMultiple) return getSelectedValues(answer).length > 0;
   return true;
+}
+
+const buildingSteps = [
+  "Reviewing your responses...",
+  "Evaluating operational readiness...",
+  "Building your ownership roadmap...",
+  "Preparing recommendations...",
+] as const;
+
+function BuildingReviewScreen() {
+  return (
+    <div className="min-h-[520px] py-12">
+      <div className="steel-surface blueprint-frame mx-auto max-w-2xl rounded-3xl border border-white/[0.08] bg-white/[0.025] px-6 py-10 text-center shadow-[0_40px_120px_-80px_rgba(255,106,0,0.45)] sm:px-10 sm:py-14">
+        <div className="molten-line mx-auto mb-8 h-px w-20" />
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#FF6A00]">
+          Foundry Review
+        </p>
+        <h1 className="mx-auto mt-5 max-w-[18ch] text-[clamp(2rem,5vw,3rem)] font-semibold leading-[1.05] tracking-[-0.045em] text-gradient">
+          Building Your Ownership Readiness Review
+        </h1>
+        <div className="mx-auto mt-10 max-w-md space-y-4 text-left">
+          {buildingSteps.map((step, index) => (
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.45 }}
+              className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-black/20 px-4 py-3"
+            >
+              <span className="text-[#FF6A00]" aria-hidden>
+                ✓
+              </span>
+              <span className="text-sm text-zinc-300">{step}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId }) {
@@ -160,9 +200,13 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
     setIsSubmitting(true);
     setSubmitError(null);
     const finalAnswers = normalizeAnswers(answers);
+    setPhase("building");
+    const minimumBriefingDelay = new Promise((resolve) =>
+      window.setTimeout(resolve, 2400),
+    );
 
     try {
-      const response = await fetch("/api/assessment", {
+      const responsePromise = fetch("/api/assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -185,15 +229,19 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
           source: "assessment_funnel",
         }),
       });
+      const [response] = await Promise.all([responsePromise, minimumBriefingDelay]);
 
       const data = await response.json();
 
       if (!response.ok) {
         setSubmitError(data.error ?? "Unable to submit. Please try again.");
+        setPhase("questions");
         return;
       }
 
       setResult({
+        assessmentId,
+        answers: finalAnswers,
         score: data.score,
         tier: data.tier,
         tierHeadline: data.tierHeadline,
@@ -212,9 +260,14 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
       setPhase("confirmation");
     } catch {
       setSubmitError("Unable to submit. Please check your connection and try again.");
+      setPhase("questions");
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (phase === "building") {
+    return <BuildingReviewScreen />;
   }
 
   if (phase === "confirmation" && result) {

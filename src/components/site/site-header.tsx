@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const nav = [
   { href: "/what-we-do", label: "What We Do" },
   { href: "/who-its-for", label: "Who It's For" },
+  { href: "/library", label: "Library" },
   { href: "/assessment", label: "Assessment", emphasize: true },
   { href: "/why-us", label: "Why Foundry" },
 ];
@@ -20,49 +21,52 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 min-h-16 border-b border-white/[0.06] bg-[#050505]/80 pt-safe backdrop-blur-xl sm:min-h-[72px]">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:h-[72px] sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:h-[72px] sm:px-8 lg:px-10 xl:px-12">
         <div className="min-w-0 shrink">
           <FoundryLogo
             size="header"
             variant="compact"
-            showTagline
-            hideTaglineOnMobile
+            markClassName="!h-9 sm:!h-10 lg:!h-[42px]"
           />
         </div>
 
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-9 xl:gap-11 lg:flex">
           {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "text-sm transition-colors",
-                item.emphasize
-                  ? "rounded-full border border-[#FF6A00]/30 bg-[#FF6A00]/8 px-4 py-1.5 font-medium text-[#E6E6E6] hover:border-[#FF6A00]/50 hover:bg-[#FF6A00]/12"
-                  : "text-[#A7A7A7] hover:text-[#E6E6E6]",
-                !item.emphasize &&
-                  pathname.startsWith(item.href) &&
-                  "text-[#E6E6E6]",
+                "group relative whitespace-nowrap py-2 text-sm text-[#A7A7A7] transition-colors hover:text-[#FF8A2E]",
+                pathname.startsWith(item.href) && "text-[#FF6A00]",
               )}
             >
               {item.label}
+              <span
+                className={cn(
+                  "absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-[#FF6A00] transition-transform duration-300",
+                  pathname.startsWith(item.href)
+                    ? "scale-x-100"
+                    : "group-hover:scale-x-100",
+                )}
+                aria-hidden
+              />
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           <Link
             href="/login"
-            className="text-sm text-[#A7A7A7] transition-colors hover:text-[#E6E6E6]"
+            className="whitespace-nowrap text-sm text-[#A7A7A7] transition-colors hover:text-[#E6E6E6]"
           >
             Client Login
           </Link>
           <ButtonLink
             href="/assessment"
             variant="primary"
-            className="px-5 py-2.5 text-[13px]"
+            className="min-h-0 whitespace-nowrap px-5 py-2 text-[13px]"
           >
-            Find Out If You&apos;re Ready
+            Start Assessment
           </ButtonLink>
         </div>
 

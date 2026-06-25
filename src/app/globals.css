@@ -5,12 +5,12 @@
   --panel: #101010;
   --foreground: #e6e6e6;
   --muted: #a7a7a7;
-  --border: rgba(255, 255, 255, 0.1);
-  --glass: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --glass: rgba(255, 255, 255, 0.025);
   --accent: #ff6a00;
   --accent-gold: #ffb000;
   --accent-ember: #9a2f00;
-  --glow: rgba(255, 106, 0, 0.2);
+  --glow: rgba(255, 106, 0, 0.14);
 
   /* Industrial material scale — black steel → gunmetal → silver */
   --steel-950: #060708;
@@ -120,10 +120,10 @@ body {
 
 .grid-bg {
   background-image: linear-gradient(
-      rgba(255, 255, 255, 0.04) 1px,
+      rgba(255, 255, 255, 0.032) 1px,
       transparent 1px
     ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 70%);
 }
@@ -137,7 +137,7 @@ body {
 
 .foundry-panel {
   background: var(--panel);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
 }
 
 .pb-safe {
@@ -157,22 +157,23 @@ body {
 /* Forged steel surface — brushed gunmetal with a top light edge */
 .steel-surface {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, transparent 18%),
     linear-gradient(155deg, var(--steel-850) 0%, var(--steel-900) 55%, var(--steel-950) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 80px -56px rgba(0, 0, 0, 0.9);
 }
 
 /* Card that lifts and emits a soft molten edge glow on hover */
 .forge-card {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, transparent 16%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, transparent 16%),
     linear-gradient(155deg, var(--steel-850) 0%, var(--steel-900) 60%, var(--steel-950) 100%);
   border: 1px solid rgba(255, 255, 255, 0.06);
   transition:
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
@@ -184,8 +185,8 @@ body {
   padding: 1px;
   background: linear-gradient(
     135deg,
-    rgba(255, 176, 0, 0.3) 0%,
-    rgba(255, 106, 0, 0.14) 35%,
+    rgba(255, 176, 0, 0.22) 0%,
+    rgba(255, 106, 0, 0.1) 35%,
     transparent 60%
   );
   -webkit-mask:
@@ -194,16 +195,16 @@ body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
-  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 
 .forge-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.095);
   box-shadow:
-    0 20px 50px -28px rgba(0, 0, 0, 0.8),
-    0 0 32px -12px rgba(255, 106, 0, 0.08);
+    0 18px 48px -30px rgba(0, 0, 0, 0.85),
+    0 0 28px -16px rgba(255, 106, 0, 0.08);
 }
 
 .forge-card:hover::after {
@@ -220,7 +221,7 @@ body {
     var(--molten-to) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 10px rgba(255, 106, 0, 0.25);
+  box-shadow: 0 0 8px rgba(255, 106, 0, 0.18);
 }
 
 /* Blueprint corner brackets for architectural framing */
@@ -234,7 +235,7 @@ body {
   position: absolute;
   width: 14px;
   height: 14px;
-  border-color: rgba(255, 106, 0, 0.28);
+  border-color: rgba(255, 106, 0, 0.22);
   border-style: solid;
   pointer-events: none;
 }
@@ -266,11 +267,11 @@ body {
 
 /* Soft hover elevation utility for non-card elements */
 .hover-lift {
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hover-lift:hover {
-  transform: translateY(-3px);
+  transform: translateY(-1px);
 }
 
 /* Cinematic keyframes */
@@ -328,6 +329,10 @@ body {
 
 /* Respect reduced-motion: disable looping cinematic animation */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .animate-forge-float,
   .animate-molten-drift,
   .animate-pulse-ring,

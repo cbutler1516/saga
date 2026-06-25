@@ -35,8 +35,8 @@ export function PageHero({
         />
       ) : (
         <div className="pointer-events-none absolute inset-0">
-          <div className="grid-bg absolute inset-0 opacity-30" />
-          <div className="absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FF6A00]/20 to-transparent" />
+          <div className="grid-bg absolute inset-0 opacity-20" />
+          <div className="absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FF6A00]/16 to-transparent" />
         </div>
       )}
 
