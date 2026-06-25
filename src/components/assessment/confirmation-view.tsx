@@ -22,6 +22,12 @@ export type SubmissionResult = {
   contactEmail?: string;
 };
 
+const foundryHandles = [
+  "Licensing, launch sequencing, and operating requirements",
+  "Policies, reporting, oversight, and exam-readiness organization",
+  "Ongoing compliance infrastructure so production can stay the focus",
+] as const;
+
 export function ConfirmationView({
   result,
 }: {
@@ -36,7 +42,7 @@ export function ConfirmationView({
       <FoundryMark size="small" className="mb-8 opacity-50" />
       <div className="mb-12 border-b border-white/10 pb-10">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#FF6A00]">
-          {result.deliverableName}
+          Your Ownership Readiness Review
         </p>
         <h1 className="mt-4 text-[clamp(1.5rem,3vw,2.25rem)] font-semibold leading-[1.2] tracking-[-0.02em] text-[#E6E6E6]">
           {result.tierHeadline}
@@ -59,7 +65,7 @@ export function ConfirmationView({
         {result.strengths.length > 0 ? (
           <div className="border-b border-white/10 px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#FF6A00]">
-              What looks strong
+              You&apos;re Already Well Positioned
             </p>
             <ul className="mt-6 space-y-3">
               {result.strengths.map((item) => (
@@ -81,10 +87,10 @@ export function ConfirmationView({
         <div className="grid gap-0 divide-y divide-white/5 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
           <div className="px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#FF6A00]">
-              What could slow you down
+              Biggest Opportunities
             </p>
             <ul className="mt-6 space-y-3">
-              {result.focusAreas.map((item) => (
+              {result.priorityActions.map((item) => (
                 <li
                   key={item}
                   className="flex gap-3 text-[15px] leading-relaxed text-[#A7A7A7]"
@@ -100,10 +106,10 @@ export function ConfirmationView({
           </div>
           <div className="px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#FF6A00]">
-              What we&apos;d tackle first
+              Potential Challenges
             </p>
             <ul className="mt-6 space-y-3">
-              {result.priorityActions.map((item) => (
+              {result.focusAreas.map((item) => (
                 <li
                   key={item}
                   className="flex gap-3 text-[15px] leading-relaxed text-[#E6E6E6]/90"
@@ -117,6 +123,26 @@ export function ConfirmationView({
               ))}
             </ul>
           </div>
+        </div>
+
+        <div className="border-t border-white/10 px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#FF6A00]">
+            What Foundry Would Handle
+          </p>
+          <ul className="mt-6 space-y-4">
+            {foundryHandles.map((step) => (
+              <li
+                key={step}
+                className="flex gap-3 text-[15px] leading-relaxed text-[#E6E6E6]/90"
+              >
+                <span
+                  className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#FF6A00]"
+                  aria-hidden="true"
+                />
+                {step}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="border-t border-white/10 px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
@@ -148,7 +174,7 @@ export function ConfirmationView({
 
       <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-8 sm:mt-10 sm:flex-row sm:items-center sm:gap-4">
         <ButtonLink href="/contact" className="min-h-[44px] w-full sm:w-auto">
-          Talk Through My Options
+          Schedule a Strategy Call
         </ButtonLink>
         <a
           href={emailSummaryHref}

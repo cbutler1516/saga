@@ -22,6 +22,7 @@ export default function WhoItsForPage() {
         label="Who it's for"
         title="For professionals evaluating ownership — and owners strengthening what they have built."
         description="Foundry supports experienced producers exploring company ownership and broker owners who want structured help with compliance, reporting, and operational readiness."
+        atmosphere={{ type: "video", src: "/video/independence-blueprint.mp4" }}
       />
 
       <PageSection>

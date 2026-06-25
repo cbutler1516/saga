@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button-link";
 import {
   Container,
@@ -58,8 +57,8 @@ export function ThreePathsSection() {
             <span className="text-gradient-accent">where you are today.</span>
           </SectionHeading>
           <p className="mt-6 text-lg text-[#A7A7A7]">
-            Each path is confidential and educational — a simple summary of
-            where you stand and what a responsible next step could look like.
+            Start with one confidential assessment. Foundry routes the context to the right
+            ownership, brokerage, or correspondent-readiness path.
           </p>
         </FadeIn>
 
@@ -98,12 +97,9 @@ export function ThreePathsSection() {
                       ~{path.estimatedMinutes} minutes · Confidential
                     </p>
                   </div>
-                  <Link
-                    href={`/assessment/${path.slug}`}
-                    className="mt-8 inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.02] px-5 py-2.5 text-sm font-medium text-[#E6E6E6] transition-colors hover:border-[#FF6A00]/25 hover:bg-[#FF6A00]/[0.06] sm:w-auto"
-                  >
-                    {path.ctaLabel}
-                  </Link>
+                  <p className="mt-8 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                    Covered in the assessment
+                  </p>
                 </div>
               </div>
             </FadeIn>

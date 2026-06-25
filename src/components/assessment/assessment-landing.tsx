@@ -141,7 +141,6 @@ export function AssessmentLanding() {
         <div className="grid-bg absolute inset-0 opacity-25" />
         <div className="absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FF6A00]/25 to-transparent" />
       </div>
-
       <PageContainer className="relative z-10 max-w-6xl px-4 pb-8 pt-4 sm:px-6 sm:pb-12 sm:pt-6 lg:pb-16 lg:pt-8">
         <header className="text-center">
           <h1 className="mx-auto max-w-[22ch] text-[clamp(1.625rem,3.5vw,2.25rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-gradient">

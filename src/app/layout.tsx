@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { FoundryChatLoader } from "@/components/chat/foundry-chat-loader";
-import { RootHeader } from "@/components/site/root-header";
 import { corePositioning, siteKeywords } from "@/lib/site-content";
 import "./globals.css";
 
@@ -35,7 +34,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-[#050505] text-[#E6E6E6] antialiased">
-        <RootHeader />
         {children}
         <FoundryChatLoader />
       </body>

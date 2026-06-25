@@ -24,19 +24,12 @@ export function FinalCtaSection() {
                 and what ownership or expansion may require — you decide what
                 happens next.
               </p>
-              <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-4">
+              <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center">
                 <ButtonLink
                   href="/assessment"
                   className="min-h-[44px] w-full sm:w-auto"
                 >
                   Find Out If You&apos;re Ready
-                </ButtonLink>
-                <ButtonLink
-                  href="/assessment/independence"
-                  variant="secondary"
-                  className="min-h-[44px] w-full sm:w-auto"
-                >
-                  Explore Ownership
                 </ButtonLink>
               </div>
               <p className="mt-8 text-xs text-[#A7A7A7]/70">

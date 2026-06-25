@@ -15,13 +15,15 @@ import {
 import type { AssessmentContact, AssessmentUtm } from "@/lib/assessment-submission";
 
 type Phase = "questions" | "contact" | "confirmation";
+type MomentumTone = "start" | "middle" | "nearly";
 
 const emptyContact: AssessmentContact = {
   firstName: "",
-  lastName: "",
   email: "",
   phone: "",
   company: "",
+  nmls: "",
+  tcpaConsent: "",
   note: "",
 };
 
@@ -58,6 +60,7 @@ function isQuestionAnswered(
 export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId }) {
   const config = getAssessment(assessmentId);
   const totalSteps = config.questions.length + 1;
+  const contactStepIndex = 2;
 
   const [phase, setPhase] = useState<Phase>("questions");
   const [step, setStep] = useState(0);
@@ -76,7 +79,17 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
   const isLastQuestion = step === config.questions.length - 1;
   const selectedValue = answers[question?.id ?? ""];
   const selectedValues = getSelectedValues(selectedValue);
-  const canContinue = isQuestionAnswered(selectedValue, question?.allowMultiple);
+  const isSlider = question?.inputType === "slider";
+  const sliderValue = selectedValue ?? "5";
+  const canContinue =
+    isSlider || isQuestionAnswered(selectedValue, question?.allowMultiple);
+  const currentScreen = step < contactStepIndex ? step + 1 : step + 2;
+  const momentumTone: MomentumTone =
+    currentScreen <= 2
+      ? "start"
+      : currentScreen >= totalSteps - 1
+        ? "nearly"
+        : "middle";
 
   function selectOption(questionId: string, value: string) {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -85,35 +98,68 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
   function toggleMultipleOption(questionId: string, value: string) {
     setAnswers((prev) => {
       const current = getSelectedValues(prev[questionId]);
+      const maxSelections =
+        config.questions.find((q) => q.id === questionId)?.maxSelections ??
+        Number.POSITIVE_INFINITY;
       const next = current.includes(value)
         ? current.filter((v) => v !== value)
+        : current.length >= maxSelections
+          ? current
         : [...current, value];
       return { ...prev, [questionId]: next.join(",") };
     });
   }
 
+  function normalizeAnswers(nextAnswers: AssessmentAnswers): AssessmentAnswers {
+    return config.questions.reduce<AssessmentAnswers>((acc, q) => {
+      acc[q.id] = q.inputType === "slider" && !nextAnswers[q.id]
+        ? "5"
+        : (nextAnswers[q.id] ?? "");
+      return acc;
+    }, {});
+  }
+
   function goNext() {
     if (!canContinue) return;
-    if (isLastQuestion) {
+    if (question?.inputType === "slider" && !answers[question.id]) {
+      setAnswers((prev) => ({ ...prev, [question.id]: sliderValue }));
+    }
+    if (step === contactStepIndex - 1) {
       setPhase("contact");
+      setSubmitError(null);
+      return;
+    }
+    if (isLastQuestion) {
+      void submitAssessment();
     } else {
       setStep((s) => s + 1);
     }
   }
 
   function goBack() {
+    if (step === contactStepIndex) {
+      setPhase("contact");
+      return;
+    }
     if (step > 0) setStep((s) => s - 1);
   }
 
   function goBackFromContact() {
     setPhase("questions");
-    setStep(config.questions.length - 1);
+    setStep(contactStepIndex - 1);
+    setSubmitError(null);
+  }
+
+  function continueFromContact() {
+    setPhase("questions");
+    setStep(contactStepIndex);
     setSubmitError(null);
   }
 
   async function submitAssessment() {
     setIsSubmitting(true);
     setSubmitError(null);
+    const finalAnswers = normalizeAnswers(answers);
 
     try {
       const response = await fetch("/api/assessment", {
@@ -121,14 +167,17 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           assessment_type: assessmentId,
-          answers,
+          answers: finalAnswers,
           contact: {
             firstName: contact.firstName.trim(),
-            lastName: contact.lastName.trim(),
             email: contact.email.trim(),
             phone: contact.phone.trim(),
             ...(contact.company?.trim()
               ? { company: contact.company.trim() }
+              : {}),
+            ...(contact.nmls?.trim() ? { nmls: contact.nmls.trim() } : {}),
+            ...(contact.tcpaConsent
+              ? { tcpaConsent: contact.tcpaConsent }
               : {}),
             ...(contact.note?.trim() ? { note: contact.note.trim() } : {}),
           },
@@ -176,11 +225,11 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
     return (
       <ContactStep
         totalSteps={totalSteps}
-        currentStep={totalSteps}
+        currentStep={contactStepIndex + 1}
         contact={contact}
         onChange={setContact}
         onBack={goBackFromContact}
-        onSubmit={submitAssessment}
+        onSubmit={continueFromContact}
         isSubmitting={isSubmitting}
         error={submitError}
       />
@@ -189,10 +238,24 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
 
   return (
     <div className="pb-4">
-      <div className="mb-8 md:mb-12">
+      <div className="mb-8 md:mb-10">
+        <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.22em] text-[#FF6A00]">
+          {step === 0
+            ? "Ownership Readiness Review"
+            : momentumTone === "middle"
+              ? "You're almost halfway there."
+              : momentumTone === "nearly"
+                ? "Almost finished."
+                : "Ownership Readiness Review"}
+        </p>
         <h1 className="text-[clamp(1.375rem,4.5vw,2rem)] font-semibold leading-[1.25] tracking-[-0.01em] text-white">
           {question.question}
         </h1>
+        {question.subheadline ? (
+          <p className="mt-3 text-lg leading-relaxed text-[#E6E6E6]/90">
+            {question.subheadline}
+          </p>
+        ) : null}
         {question.helperText && (
           <p className="mt-3 text-[15px] leading-relaxed text-zinc-500 md:mt-4">
             {question.helperText}
@@ -200,20 +263,52 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
         )}
       </div>
 
-      <ProgressIndicator current={step + 1} total={totalSteps} />
+      <ProgressIndicator current={currentScreen} total={totalSteps} />
 
       <fieldset className="mt-8 space-y-3 md:mt-10">
         <legend className="sr-only">{question.question}</legend>
-        {question.allowMultiple
+        {question.inputType === "slider" ? (
+          <div className="rounded-2xl border border-white/10 bg-[#101010] p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-zinc-500">Not confident yet</span>
+              <span className="text-sm text-zinc-500">Very confident</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              step="1"
+              value={sliderValue}
+              onChange={(event) => selectOption(question.id, event.target.value)}
+              className="mt-8 w-full accent-[#FF6A00]"
+              aria-label={question.question}
+            />
+            <div className="mt-6 flex items-end justify-between">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-zinc-600">
+                Confidence
+              </span>
+              <span className="text-4xl font-semibold tracking-[-0.04em] text-white">
+                {sliderValue}
+                <span className="text-base text-zinc-500">/10</span>
+              </span>
+            </div>
+          </div>
+        ) : question.allowMultiple
           ? question.options.map((option) => {
               const isSelected = selectedValues.includes(option.value);
+              const maxReached =
+                Boolean(question.maxSelections) &&
+                selectedValues.length >= (question.maxSelections ?? 0);
+              const isDisabled = maxReached && !isSelected;
               return (
                 <label
                   key={option.value}
                   className={`flex min-h-[44px] cursor-pointer items-start gap-4 rounded-xl border px-4 py-3.5 transition-colors sm:px-5 sm:py-4 ${
                     isSelected
                       ? "border-[#FF6A00]/50 bg-[#FF6A00]/8 ring-1 ring-[#FF6A00]/25"
-                      : "border-white/10 bg-[#101010] hover:border-white/20"
+                      : isDisabled
+                        ? "cursor-not-allowed border-white/[0.06] bg-[#101010]/60 opacity-45"
+                        : "border-white/10 bg-[#101010] hover:border-white/20"
                   }`}
                 >
                   <input
@@ -224,6 +319,7 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
                     onChange={() =>
                       toggleMultipleOption(question.id, option.value)
                     }
+                    disabled={isDisabled}
                     className="mt-0.5 h-5 w-5 shrink-0 rounded border-white/20 bg-transparent text-[#FF6A00] focus:ring-[#FF6A00]/30"
                   />
                   <span className="text-[15px] leading-relaxed text-zinc-300 sm:text-base">
@@ -259,6 +355,12 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
             })}
       </fieldset>
 
+      {submitError ? (
+        <p className="mt-6 text-[14px] text-red-400" role="alert">
+          {submitError}
+        </p>
+      ) : null}
+
       <div className="sticky bottom-0 -mx-4 mt-10 flex items-center justify-between gap-4 border-t border-white/5 bg-[#050505]/95 px-4 py-4 pb-safe backdrop-blur-md sm:static sm:mx-0 sm:mt-12 sm:bg-transparent sm:px-0 sm:py-0 sm:pt-8 sm:backdrop-blur-none">
         <button
           type="button"
@@ -271,10 +373,14 @@ export function AssessmentFlow({ assessmentId }: { assessmentId: AssessmentId })
         <button
           type="button"
           onClick={goNext}
-          disabled={!canContinue}
+          disabled={!canContinue || isSubmitting}
           className="min-h-[44px] rounded-full bg-[#FF6A00] px-6 py-3 text-[14px] font-medium tracking-wide text-[#050505] transition-colors hover:bg-[#FF7A1A] disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Continue
+          {isLastQuestion
+            ? isSubmitting
+              ? "Building Review..."
+              : "Build My Review"
+            : "Continue"}
         </button>
       </div>
     </div>

@@ -3,10 +3,12 @@ import { getAssessment } from "./assessment-config";
 
 export type AssessmentContact = {
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
   phone: string;
   company?: string;
+  nmls?: string;
+  tcpaConsent?: string;
   note?: string;
 };
 
@@ -81,9 +83,6 @@ export function validateSubmissionBody(
   if (!firstName) {
     return { success: false, error: "First name is required." };
   }
-  if (!lastName) {
-    return { success: false, error: "Last name is required." };
-  }
   if (!email || !EMAIL_PATTERN.test(email)) {
     return { success: false, error: "A valid email address is required." };
   }
@@ -93,6 +92,12 @@ export function validateSubmissionBody(
 
   const company =
     typeof contact.company === "string" ? contact.company.trim() : undefined;
+  const nmls =
+    typeof contact.nmls === "string" ? contact.nmls.trim() : undefined;
+  const tcpaConsent =
+    typeof contact.tcpaConsent === "string"
+      ? contact.tcpaConsent.trim()
+      : undefined;
   const note =
     typeof contact.note === "string" ? contact.note.trim() : undefined;
 
@@ -124,10 +129,12 @@ export function validateSubmissionBody(
       answers,
       contact: {
         firstName,
-        lastName,
+        ...(lastName ? { lastName } : {}),
         email,
         phone,
         ...(company ? { company } : {}),
+        ...(nmls ? { nmls } : {}),
+        ...(tcpaConsent ? { tcpaConsent } : {}),
         ...(note ? { note } : {}),
       },
       utm,

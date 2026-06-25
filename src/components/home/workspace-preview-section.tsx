@@ -62,9 +62,9 @@ export function WorkspacePreviewSection() {
     <Section className="border-t border-white/[0.06] bg-[#050505]">
       <Container>
         <FadeIn className="mx-auto max-w-2xl text-center">
-          <SectionLabel>Introducing · Product preview</SectionLabel>
+          <SectionLabel>Foundry Workspace Preview</SectionLabel>
           <SectionHeading className="mt-7">
-            Foundry <span className="text-molten">Workspace</span>
+            One command center for the work that cannot slip.
           </SectionHeading>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-zinc-400">
             One calm place to see exactly where your company stands — compliance,
@@ -73,7 +73,10 @@ export function WorkspacePreviewSection() {
         </FadeIn>
 
         <FadeIn delay={0.1} className="mt-14 md:mt-16">
-          <BrowserFrame url="app.foundry.com/workspace" className="mx-auto max-w-5xl">
+          <BrowserFrame
+            url="app.foundry.com/workspace"
+            className="mx-auto max-w-5xl ring-1 ring-[#FF6A00]/10"
+          >
             <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               {/* Sidebar */}
               <div className="hidden border-r border-white/[0.06] bg-white/[0.012] p-5 md:block">
@@ -105,17 +108,25 @@ export function WorkspacePreviewSection() {
                     Cascade Mortgage Co.
                   </p>
                 </div>
+                <div className="mt-3 rounded-lg border border-emerald-400/15 bg-emerald-400/[0.04] p-3">
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-emerald-300/70">
+                    Current posture
+                  </p>
+                  <p className="mt-1.5 text-[13px] font-medium text-emerald-200">
+                    Exam ready
+                  </p>
+                </div>
               </div>
 
               {/* Main */}
               <div className="p-5 sm:p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                   <div>
                     <h3 className="text-base font-semibold text-white">
                       Good morning, Daniel
                     </h3>
                     <p className="mt-1 text-[12px] text-zinc-500">
-                      Everything current as of today
+                      Compliance operations · Updated 4 minutes ago
                     </p>
                   </div>
                   <span className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-1 text-[11px] font-medium text-emerald-300/90 sm:inline-flex">

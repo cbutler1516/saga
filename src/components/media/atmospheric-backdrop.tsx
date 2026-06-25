@@ -11,6 +11,7 @@ type AtmosphericBackdropProps = {
   imageSrc?: string;
   poster?: string;
   priority?: boolean;
+  disableVideoOnMobile?: boolean;
   variant?: AtmosphericVariant;
   className?: string;
 };
@@ -27,6 +28,7 @@ export function AtmosphericBackdrop({
   imageSrc,
   poster,
   priority = false,
+  disableVideoOnMobile = true,
   variant = "section",
   className,
 }: AtmosphericBackdropProps) {
@@ -42,6 +44,7 @@ export function AtmosphericBackdrop({
           lazy={!priority}
           priority={priority}
           overlay={false}
+          disableVideoOnMobile={disableVideoOnMobile}
           className="absolute inset-0"
         />
       ) : null}

@@ -23,8 +23,8 @@ export default function WhyUsPage() {
         title="An operating partner for professionals who take ownership seriously."
         description="Leadership with regulatory examination experience and deep operating experience building compliance programs — helping you evaluate the path and build infrastructure responsibly."
         atmosphere={{
-          type: "image",
-          src: "/images/infrastructure-framework.png",
+          type: "video",
+          src: "/video/scale-framework.mp4",
         }}
       />
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { ButtonLink } from "@/components/ui/button-link";
 import {
   Container,
   FadeIn,
@@ -55,12 +54,6 @@ export function WhatHappensNextSection() {
             ))}
           </div>
         </div>
-
-        <FadeIn className="mt-12 text-center">
-          <ButtonLink href="/assessment" className="min-h-[44px] w-full sm:w-auto">
-            Find Out If You&apos;re Ready
-          </ButtonLink>
-        </FadeIn>
       </Container>
     </Section>
   );

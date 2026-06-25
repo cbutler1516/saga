@@ -19,10 +19,7 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header
-      className="fixed inset-x-0 top-0 z-50 min-h-16 border-b border-white/[0.06] bg-[#050505]/80 pt-safe backdrop-blur-xl sm:min-h-[72px]"
-      style={{ position: "fixed", left: 0, right: 0, top: 0, zIndex: 50 }}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 min-h-16 border-b border-white/[0.06] bg-[#050505]/80 pt-safe backdrop-blur-xl sm:min-h-[72px]">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:h-[72px] sm:px-6 lg:px-8">
         <div className="min-w-0 shrink">
           <FoundryLogo

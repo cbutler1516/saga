@@ -12,9 +12,12 @@ export type QuestionOption = {
 export type AssessmentQuestion = {
   id: string;
   question: string;
+  subheadline?: string;
   helperText?: string;
   options: QuestionOption[];
   allowMultiple?: boolean;
+  maxSelections?: number;
+  inputType?: "choice" | "slider";
   maxQuestionScore?: number;
 };
 
@@ -95,6 +98,105 @@ export const assessmentLanding = {
     "Answer a few questions and we'll help you understand what's realistic, what might slow you down, and what your best next step should be.",
   supportLine: "Takes about 2 minutes. Confidential. No pressure.",
 };
+
+const ownershipFunnelQuestions: AssessmentQuestion[] = [
+  {
+    id: "ownership-intent",
+    question: "Could owning your own mortgage company be the right next step?",
+    subheadline: "Let's find out together.",
+    helperText:
+      "This helps us understand where you are in the ownership decision.",
+    options: [
+      { value: "thinking", label: "I've been thinking about it", score: 2 },
+      { value: "actively-exploring", label: "I'm actively exploring it", score: 4 },
+      { value: "curious", label: "I'm just curious", score: 1 },
+    ],
+  },
+  {
+    id: "holding-back",
+    question: "What's holding you back?",
+    helperText: "Knowing this helps us focus your recommendations.",
+    allowMultiple: true,
+    maxSelections: 3,
+    maxQuestionScore: 4,
+    options: [
+      { value: "compliance", label: "Compliance", score: 0 },
+      { value: "licensing", label: "Licensing", score: 0 },
+      { value: "cost", label: "Cost", score: 0 },
+      { value: "operations", label: "Operations", score: 0 },
+      { value: "technology", label: "Technology", score: 0 },
+      { value: "processing", label: "Processing", score: 0 },
+      { value: "correspondent-lending", label: "Correspondent Lending", score: 0 },
+      { value: "hiring", label: "Hiring", score: 0 },
+      { value: "where-to-start", label: "I don't know where to start", score: 0 },
+    ],
+  },
+  {
+    id: "annual-production",
+    question: "How many loans do you personally close each year?",
+    helperText:
+      "This helps us estimate whether ownership is financially realistic.",
+    options: [
+      { value: "under-12", label: "Under 12 loans", score: 1 },
+      { value: "12-24", label: "12–24 loans", score: 2 },
+      { value: "25-50", label: "25–50 loans", score: 3 },
+      { value: "51-100", label: "51–100 loans", score: 4 },
+      { value: "100-plus", label: "100+ loans", score: 4 },
+    ],
+  },
+  {
+    id: "annual-volume",
+    question: "What is your approximate annual loan volume?",
+    helperText:
+      "Volume helps us understand the operating model and support level that may make sense.",
+    options: [
+      { value: "under-15m", label: "Under $15M", score: 1 },
+      { value: "15-30m", label: "$15M–$30M", score: 2 },
+      { value: "30-75m", label: "$30M–$75M", score: 3 },
+      { value: "75-150m", label: "$75M–$150M", score: 4 },
+      { value: "150m-plus", label: "$150M+", score: 4 },
+    ],
+  },
+  {
+    id: "current-company",
+    question: "Where are you currently producing?",
+    helperText:
+      "Your current environment affects what a transition could realistically look like.",
+    options: [
+      { value: "large-national-brokerage", label: "Large National Brokerage", score: 2 },
+      { value: "independent-broker", label: "Independent Broker", score: 3 },
+      { value: "retail-mortgage-lender", label: "Retail Mortgage Lender", score: 2 },
+      { value: "bank", label: "Bank", score: 2 },
+      { value: "credit-union", label: "Credit Union", score: 2 },
+      { value: "other", label: "Other", score: 1 },
+    ],
+  },
+  {
+    id: "timeline",
+    question: "What timeline feels most realistic?",
+    helperText:
+      "Timeline helps us calibrate whether the next step should be education, planning, or preparation.",
+    options: [
+      { value: "researching", label: "Just researching", score: 1 },
+      { value: "6-12", label: "6–12 months", score: 2 },
+      { value: "3-6", label: "3–6 months", score: 3 },
+      { value: "within-90", label: "Within 90 days", score: 4 },
+      { value: "preparing", label: "Already preparing", score: 4 },
+    ],
+  },
+  {
+    id: "confidence",
+    question:
+      "If someone handled the operational side, how confident would you feel about owning your own company?",
+    helperText:
+      "This helps us understand where you are in your decision-making process.",
+    inputType: "slider",
+    options: Array.from({ length: 10 }, (_, index) => {
+      const value = String(index + 1);
+      return { value, label: value, score: Math.ceil((index + 1) / 3) };
+    }),
+  },
+];
 
 export const assessments: Record<AssessmentId, AssessmentDefinition> = {
   independence: {
@@ -827,6 +929,7 @@ export const assessments: Record<AssessmentId, AssessmentDefinition> = {
 };
 
 for (const id of Object.keys(assessments) as AssessmentId[]) {
+  assessments[id].questions = ownershipFunnelQuestions;
   assessments[id].maxScore = sumMaxScore(assessments[id].questions);
 }
 
